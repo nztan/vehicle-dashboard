@@ -6,7 +6,7 @@ import { Icon } from './icon';
   selector: 'app-battery',
   imports: [Icon, LucideBattery],
   template: `
-    <app-icon [value]="value" [unit]="'%'">
+    <app-icon [value]="value.toString()" [unit]="'%'">
       <svg icon lucideBattery class="rotate-270 size-24"/>
     </app-icon>
   `

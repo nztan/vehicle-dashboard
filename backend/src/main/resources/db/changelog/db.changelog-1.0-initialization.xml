@@ -9,7 +9,7 @@
     <changeSet id="create-vehicle-reading" author="nztan">
         <createTable tableName="vehicle_reading">
             <column name="id" type="bigserial">
-                <constraints primaryKey="true" nullable="false" />
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="recorded_at" type="timestamp with time zone">
                 <constraints nullable="false"/>
@@ -41,9 +41,9 @@
     <changeSet id="create-vehicle_setting" author="nztan">
         <createTable tableName="vehicle_setting">
             <column name="id" type="int">
-                <constraints primaryKey="true" nullable="false" />
+                <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="motor_speed_setting" type="int">
+            <column name="motor_speed" type="int">
                 <constraints nullable="false"/>
             </column>
             <column name="charging_ind" type="boolean">

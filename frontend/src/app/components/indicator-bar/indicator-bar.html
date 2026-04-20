@@ -1,20 +1,20 @@
 <div class="flex flex-row p-4 gap-4 border-2 border-mist-800">
-  @if (isParkingBrakeOn) {
+  @if (parkingBrakeWarning()) {
     <app-icon>
       <svg icon lucideCircleParking class="size-24" color="#FF0000"/>
     </app-icon>
   }
-  @if (isCheckEngineOn) {
+  @if (checkEngineWarning()) {
     <app-icon>
       <svg icon lucideOctagonAlert class="size-24" color="#FF0000"/>
     </app-icon>
   }
-  @if (isMotorStatusOn) {
+  @if (motorStatusWarning()) {
     <app-icon>
       <svg icon lucideSmartphoneCharging class="size-24" color="#FF0000"/>
     </app-icon>
   }
-  @if (isBatteryLowOn) {
+  @if (isBatteryLow) {
     <app-icon>
       <svg icon lucideBatteryWarning class="rotate-270 size-24" color="#FF0000"/>
     </app-icon>

@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { LucideCog } from '@lucide/angular';
 import { Icon } from './icon';
+import { GearType } from '../../../models/dashboard-snapshot.model';
 
 @Component({
   selector: 'app-gear',
@@ -12,5 +13,5 @@ import { Icon } from './icon';
   `
 })
 export class Gear {
-  @Input() value: number = 0;
+  @Input() value: GearType = GearType.P;
 }

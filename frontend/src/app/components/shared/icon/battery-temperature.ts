@@ -6,7 +6,7 @@ import { Icon } from './icon';
   selector: 'app-battery-temperature',
   imports: [Icon, LucideBattery, LucideThermometer],
   template: `
-    <app-icon [value]="value" [unit]="value !== undefined ? '℃' : ''">
+    <app-icon [value]="value?.toString()" [unit]="value !== undefined ? '℃' : ''">
       <div icon class="flex -space-x-12">
         <svg lucideBattery class="rotate-270 size-24"/>
         <svg lucideThermometer class="size-24"/>

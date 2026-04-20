@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import type { EChartsCoreOption } from 'echarts/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { getIconColor } from '../../utils/get-theme.util';
@@ -14,15 +14,11 @@ import { getIconColor } from '../../utils/get-theme.util';
     class: 'block w-full'
   }
 })
-export class Gauge implements OnChanges {
+export class Gauge {
   @Input() min?: number = 0;
   @Input() max?: number = 100;
-  @Input() value?: number = 0;
+  @Input() value?: number;
   @Input() name?: string = '';
-
-  ngOnChanges(changes: SimpleChanges) {
-    console.log(this.name + ', ' + this.value);
-  }
 
   get options(): EChartsCoreOption {
     return {
@@ -48,7 +44,7 @@ export class Gauge implements OnChanges {
           },
           data: [
             {
-              value: this.value,
+              value: this.value ?? this.min,
               name: this.name
             }
           ]

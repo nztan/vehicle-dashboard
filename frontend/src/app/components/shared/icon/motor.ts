@@ -6,7 +6,7 @@ import { Icon } from './icon';
   selector: 'app-motor',
   imports: [Icon, LucideSmartphoneCharging],
   template: `
-    <app-icon [value]="value" [unit]="'RPM'">
+    <app-icon [value]="value.toString()" [unit]="'RPM'">
       <svg icon lucideSmartphoneCharging class="size-24"/>
     </app-icon>
   `

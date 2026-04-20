@@ -9,6 +9,7 @@ import { TooltipComponent } from 'echarts/components';
 import { provideLucideIcons } from '@lucide/angular';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
+import { provideHttpClient } from '@angular/common/http';
 
 echarts.use([
   GaugeChart,
@@ -18,6 +19,7 @@ echarts.use([
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideHttpClient(),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideEchartsCore({echarts}),

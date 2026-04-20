@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Icon } from '../shared/icon/icon';
 import {
   LucideBatteryWarning,
@@ -6,6 +6,7 @@ import {
   LucideOctagonAlert,
   LucideSmartphoneCharging
 } from '@lucide/angular';
+import { VehicleService } from '../../services/vehicle.service';
 
 @Component({
   selector: 'app-indicator-bar',
@@ -20,20 +21,16 @@ import {
   styleUrl: './indicator-bar.css',
 })
 export class IndicatorBar {
+  private vehicleService = inject(VehicleService);
 
-  get isParkingBrakeOn() {
-    return true;
-  }
+  private snapshot = this.vehicleService.dashboardSnapshot;
 
-  get isCheckEngineOn() {
-    return true;
-  }
+  batteryLevel = computed(() => this.snapshot()?.batteryLevel ?? 0);
+  parkingBrakeWarning = computed(() => this.snapshot()?.parkingBrakeWarning ?? false);
+  checkEngineWarning = computed(() => this.snapshot()?.checkEngineWarning ?? false);
+  motorStatusWarning = computed(() => this.snapshot()?.motorStatusWarning ?? false);
 
-  get isMotorStatusOn() {
-    return true;
-  }
-
-  get isBatteryLowOn() {
-    return true;
+  get isBatteryLow() {
+    return this.batteryLevel() <= 20;
   }
 }

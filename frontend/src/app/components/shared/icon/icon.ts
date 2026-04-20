@@ -16,7 +16,7 @@ import { getIconColor } from '../../../utils/get-theme.util';
   `
 })
 export class Icon {
-  @Input() value?: number | undefined;
+  @Input() value?: string | undefined;
   @Input() unit?: string;
   @Input() color?: string;
 
