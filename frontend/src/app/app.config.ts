@@ -6,6 +6,9 @@ import { routes } from './app.routes';
 import { CanvasRenderer } from 'echarts/renderers';
 import { GaugeChart } from 'echarts/charts';
 import { TooltipComponent } from 'echarts/components';
+import { provideLucideIcons } from '@lucide/angular';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeuix/themes/aura';
 
 echarts.use([
   GaugeChart,
@@ -17,6 +20,12 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideEchartsCore({echarts})
+    provideEchartsCore({echarts}),
+    provideLucideIcons(),
+    providePrimeNG({
+      theme: {
+        preset: Aura
+      }
+    })
   ]
 };

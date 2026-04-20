@@ -1,1 +1,35 @@
-<p>bottom-menu works!</p>
+<div class="flex flex-row p-4 gap-4 justify-between border-2 border-mist-800">
+  <div>
+    <button class="cursor-pointer hover:opacity-50">
+      <app-icon>
+        <svg icon lucideCog class="size-24"/>
+      </app-icon>
+    </button>
+
+    <button class="cursor-pointer hover:opacity-50">
+      <app-icon>
+        <svg icon lucideSmartphoneCharging class="size-24"/>
+      </app-icon>
+    </button>
+
+    <button class="cursor-pointer hover:opacity-50">
+      <app-battery-temperature [value]="undefined"/>
+    </button>
+  </div>
+
+  <div>
+    <button class="cursor-pointer hover:opacity-50">
+      <app-icon>
+        <svg icon lucideMenu class="size-24"/>
+      </app-icon>
+    </button>
+  </div>
+
+  <div>
+    <button class="cursor-pointer hover:opacity-50">
+      <app-icon>
+        <svg icon lucidePlugZap class="size-24"/>
+      </app-icon>
+    </button>
+  </div>
+</div>

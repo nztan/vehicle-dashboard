@@ -1,1 +1,22 @@
-<p>top-indicator-bar works!</p>
+<div class="flex flex-row p-4 gap-4 border-2 border-mist-800">
+  @if (isParkingBrakeOn) {
+    <app-icon>
+      <svg icon lucideCircleParking class="size-24" color="#FF0000"/>
+    </app-icon>
+  }
+  @if (isCheckEngineOn) {
+    <app-icon>
+      <svg icon lucideOctagonAlert class="size-24" color="#FF0000"/>
+    </app-icon>
+  }
+  @if (isMotorStatusOn) {
+    <app-icon>
+      <svg icon lucideSmartphoneCharging class="size-24" color="#FF0000"/>
+    </app-icon>
+  }
+  @if (isBatteryLowOn) {
+    <app-icon>
+      <svg icon lucideBatteryWarning class="rotate-270 size-24" color="#FF0000"/>
+    </app-icon>
+  }
+</div>
