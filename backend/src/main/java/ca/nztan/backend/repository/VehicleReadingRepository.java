@@ -8,4 +8,5 @@ import java.math.BigDecimal;
 
 @Repository
 public interface VehicleReadingRepository extends JpaRepository<VehicleReading, BigDecimal> {
+    VehicleReading findTopByOrderByIdDesc();
 }

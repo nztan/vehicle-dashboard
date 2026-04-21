@@ -6,7 +6,7 @@
             http://www.liquibase.org/xml/ns/dbchangelog
            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="create-vehicle-reading" author="nztan">
+    <changeSet id="create-vehicle_reading" author="nztan">
         <createTable tableName="vehicle_reading">
             <column name="id" type="bigserial">
                 <constraints primaryKey="true" nullable="false"/>
@@ -38,8 +38,8 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="create-vehicle_setting" author="nztan">
-        <createTable tableName="vehicle_setting">
+    <changeSet id="create-user_input" author="nztan">
+        <createTable tableName="user_input">
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -50,5 +50,12 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
+
+    <changeSet id="initialize-user_input" author="nztan" dbms="postgresql">
+        <sql>
+            INSERT INTO user_input (id, motor_speed, charging_ind)
+            VALUES (1, 0, false);
+        </sql>
     </changeSet>
 </databaseChangeLog>

@@ -1,15 +1,11 @@
 package ca.nztan.backend.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -20,10 +16,10 @@ import java.time.LocalDate;
 public class VehicleReading {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private BigDecimal id;
+    private Long id;
 
-    @Setter
     @Column(name = "recorded_at", nullable = false)
     private LocalDate recordedAt;
 
@@ -45,9 +41,21 @@ public class VehicleReading {
 
     @Setter
     @Column(name = "parking_brake_ind", nullable = false)
-    private Boolean parkingBradeOn;
+    private Boolean parkingBrade;
 
     @Setter
     @Column(name = "check_engine_ind", nullable = false)
-    private Boolean checkEngineOn;
+    private Boolean checkEngine;
+
+    public static VehicleReading newInstance(int motorRpm, int powerKw, int batteryLevel, int batteryTemperature, boolean parkingBrade, boolean checkEngine) {
+        VehicleReading vehicleReading = new VehicleReading();
+        vehicleReading.id = null;
+        vehicleReading.motorRpm = motorRpm;
+        vehicleReading.powerKw = powerKw;
+        vehicleReading.batteryLevel = batteryLevel;
+        vehicleReading.batteryTemperature = batteryTemperature;
+        vehicleReading.parkingBrade = parkingBrade;
+        vehicleReading.checkEngine = checkEngine;
+        return vehicleReading;
+    }
 }
