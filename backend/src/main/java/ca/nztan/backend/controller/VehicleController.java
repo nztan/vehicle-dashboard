@@ -1,9 +1,9 @@
 package ca.nztan.backend.controller;
 
 import ca.nztan.backend.dto.DashboardSnapshotDto;
-import ca.nztan.backend.dto.UserInputDto;
-import ca.nztan.backend.service.UserInputService;
+import ca.nztan.backend.dto.VehicleSettingDto;
 import ca.nztan.backend.service.VehicleReadingService;
+import ca.nztan.backend.service.VehicleSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class VehicleController {
 
-    private final UserInputService userInputService;
     private final VehicleReadingService vehicleReadingService;
+    private final VehicleSettingService vehicleSettingService;
 
     @GetMapping("/snapshot")
     public DashboardSnapshotDto getSnapshot() {
-        return vehicleReadingService.getLatestDashboardSnapshot();
+        return vehicleReadingService.getDashboardSnapshot();
     }
 
     @PostMapping("/setting")
-    public void save(@RequestBody UserInputDto setting) {
-        userInputService.save(setting);
+    public void save(@RequestBody VehicleSettingDto setting) {
+        vehicleSettingService.save(setting);
     }
 }

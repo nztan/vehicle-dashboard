@@ -5,7 +5,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class UserInputDto {
+public class VehicleSettingDto {
     private Integer motorSpeed;
     private Boolean chargingOn;
 }

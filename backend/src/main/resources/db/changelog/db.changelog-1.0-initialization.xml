@@ -8,13 +8,9 @@
 
     <changeSet id="create-vehicle_reading" author="nztan">
         <createTable tableName="vehicle_reading">
-            <column name="id" type="bigserial">
+            <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="recorded_at" type="timestamp with time zone">
-                <constraints nullable="false"/>
-            </column>
-
             <column name="motor_rpm" type="int">
                 <constraints nullable="false"/>
             </column>
@@ -38,8 +34,8 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="create-user_input" author="nztan">
-        <createTable tableName="user_input">
+    <changeSet id="create-vehicle_setting" author="nztan">
+        <createTable tableName="vehicle_setting">
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -52,9 +48,16 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="initialize-user_input" author="nztan" dbms="postgresql">
+    <changeSet id="initialize-vehicle_reading" author="nztan" dbms="postgresql">
         <sql>
-            INSERT INTO user_input (id, motor_speed, charging_ind)
+            INSERT INTO vehicle_reading (id, motor_rpm, power_kw, battery_level, battery_temperature, parking_brake_ind, check_engine_ind)
+            VALUES (1, 0, 0, 100, 20, false, false);
+        </sql>
+    </changeSet>
+
+    <changeSet id="initialize-vehicle_setting" author="nztan" dbms="postgresql">
+        <sql>
+            INSERT INTO vehicle_setting (id, motor_speed, charging_ind)
             VALUES (1, 0, false);
         </sql>
     </changeSet>

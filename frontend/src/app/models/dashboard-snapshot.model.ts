@@ -11,7 +11,5 @@ export interface DashboardSnapshot {
 
 export enum GearType {
   D = 'D',
-  P = 'P',
-  N = 'N',
-  R = 'R',
+  P = 'P'
 }

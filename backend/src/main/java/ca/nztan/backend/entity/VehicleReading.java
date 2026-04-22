@@ -1,27 +1,22 @@
 package ca.nztan.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
-
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "vehicle_reading")
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
 public class VehicleReading {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long id;
-
-    @Column(name = "recorded_at", nullable = false)
-    private LocalDate recordedAt;
+    private Integer id;
 
     @Setter
     @Column(name = "motor_rpm", nullable = false)
@@ -46,17 +41,4 @@ public class VehicleReading {
     @Setter
     @Column(name = "check_engine_ind", nullable = false)
     private Boolean checkEngine;
-
-    public static VehicleReading newInstance(int motorRpm, int powerKw, int batteryLevel, int batteryTemperature, boolean parkingBrade, boolean checkEngine) {
-        VehicleReading vehicleReading = new VehicleReading();
-        vehicleReading.id = null;
-        vehicleReading.motorRpm = motorRpm;
-        vehicleReading.powerKw = powerKw;
-        vehicleReading.batteryLevel = batteryLevel;
-        vehicleReading.batteryTemperature = batteryTemperature;
-        vehicleReading.parkingBrade = parkingBrade;
-        vehicleReading.checkEngine = checkEngine;
-        vehicleReading.recordedAt = LocalDate.now();
-        return vehicleReading;
-    }
 }

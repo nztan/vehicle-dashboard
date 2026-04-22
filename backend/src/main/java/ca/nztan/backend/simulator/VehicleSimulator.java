@@ -1,9 +1,9 @@
 package ca.nztan.backend.simulator;
 
-import ca.nztan.backend.dto.UserInputDto;
-import ca.nztan.backend.entity.VehicleReading;
-import ca.nztan.backend.service.UserInputService;
+import ca.nztan.backend.dto.GearType;
+import ca.nztan.backend.dto.VehicleSettingDto;
 import ca.nztan.backend.service.VehicleReadingService;
+import ca.nztan.backend.service.VehicleSettingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,15 +29,13 @@ public class VehicleSimulator {
     private final static int BATTERY_LEVEL_STEP = 1;
     private final static int BATTERY_TEMPERATURE_STEP = 1;
 
-    private final static int CHECK_ENGINE_THRESHOLD = 800;
-
     private final VehicleReadingService vehicleReadingService;
-    private final UserInputService userInputService;
-    private VehicleSimulatorState previousState;
+    private final VehicleSettingService vehicleSettingService;
+    private VehicleState previousState;
 
     @Scheduled(fixedRate = 1200)
     public void simulate() {
-        UserInputDto userInput = userInputService.get();
+        VehicleSettingDto userInput = vehicleSettingService.get();
         if (previousState == null) {
             previousState = getDefaultState();
         }
@@ -47,40 +45,32 @@ public class VehicleSimulator {
         }
 
         // set up motorRPM boundary with motor speed, powerKW varies with the motorRPM
-        // using random number to simulate realistic behavior
         int targetMotorRpm = MOTOR_RPM_BY_SPEED[userInput.getMotorSpeed()];
         int targetPowerKW = userInput.getChargingOn() ? MIN_POWER_KW : (targetMotorRpm * MAX_POWER_KW / MOTOR_RPM_BY_SPEED[MOTOR_RPM_BY_SPEED.length - 1]);
 
-        VehicleSimulatorState newState = new VehicleSimulatorState()
+        VehicleState newState = new VehicleState()
                 .setMotorRpm(interpolate(previousState.getMotorRpm(), targetMotorRpm, MOTOR_RPM_STEP))
                 .setPowerKw(interpolate(previousState.getPowerKw(), targetPowerKW, POWER_KW_STEP))
                 .setBatteryLevel(calculateBatteryLevel(userInput, previousState.getBatteryLevel()))
                 .setBatteryTemperature(calculateBatteryTemperature(userInput, previousState.getBatteryTemperature()));
-        vehicleReadingService.save(assemble(newState, userInput));
+        newState.setGear(newState.getMotorRpm() == 0 ? GearType.P : GearType.D);
+        vehicleReadingService.save(newState);
         previousState = newState;
 
         log.debug("Simulated vehicle with user input: {}, and state updated: {}", userInput, newState);
     }
 
-    private VehicleReading assemble(VehicleSimulatorState vehicleSimulatorState, UserInputDto userInput) {
-        return VehicleReading.newInstance(vehicleSimulatorState.getMotorRpm(),
-                vehicleSimulatorState.getPowerKw(),
-                vehicleSimulatorState.getBatteryLevel(),
-                vehicleSimulatorState.getBatteryTemperature(),
-                userInput.getMotorSpeed() == 0,
-                vehicleSimulatorState.getMotorRpm() >= CHECK_ENGINE_THRESHOLD);
-    }
-
-    private VehicleSimulatorState getDefaultState() {
+    private VehicleState getDefaultState() {
         // default as a parked vehicle, with full battery and no speed
-        return new VehicleSimulatorState()
+        return new VehicleState()
                 .setMotorRpm(0)
                 .setPowerKw(0)
                 .setBatteryLevel(100)
-                .setBatteryTemperature(25);
+                .setBatteryTemperature(25)
+                .setGear(GearType.P);
     }
 
-    private int calculateBatteryTemperature(UserInputDto userInput, int current) {
+    private int calculateBatteryTemperature(VehicleSettingDto userInput, int current) {
         // battery temperature changes at high speed only
         if (userInput.getMotorSpeed() > 2) {
             return Math.min(current + BATTERY_TEMPERATURE_STEP, MAX_BATTERY_TEMPERATURE);
@@ -88,7 +78,7 @@ public class VehicleSimulator {
         return Math.max(current - BATTERY_TEMPERATURE_STEP, MIN_BATTERY_TEMPERATURE);
     }
 
-    private int calculateBatteryLevel(UserInputDto userInput, int current) {
+    private int calculateBatteryLevel(VehicleSettingDto userInput, int current) {
         // battery level changes only when charging or moving
         if (userInput.getChargingOn()) {
             return Math.min(current + BATTERY_LEVEL_STEP, MAX_BATTERY_LEVEL);
