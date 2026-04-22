@@ -35,6 +35,10 @@ public class VehicleReading {
     private Integer batteryTemperature;
 
     @Setter
+    @Column(name = "gear_ratio", nullable = false)
+    private String gearRatio;
+
+    @Setter
     @Column(name = "parking_brake_ind", nullable = false)
     private Boolean parkingBrade;
 

@@ -23,14 +23,15 @@
             <column name="battery_temperature" type="int">
                 <constraints nullable="false"/>
             </column>
-
+            <column name="gear_ratio" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
             <column name="parking_brake_ind" type="boolean">
                 <constraints nullable="false"/>
             </column>
             <column name="check_engine_ind" type="boolean">
                 <constraints nullable="false"/>
             </column>
-
         </createTable>
     </changeSet>
 
@@ -50,8 +51,8 @@
 
     <changeSet id="initialize-vehicle_reading" author="nztan" dbms="postgresql">
         <sql>
-            INSERT INTO vehicle_reading (id, motor_rpm, power_kw, battery_level, battery_temperature, parking_brake_ind, check_engine_ind)
-            VALUES (1, 0, 0, 100, 20, false, false);
+            INSERT INTO vehicle_reading (id, motor_rpm, power_kw, battery_level, battery_temperature, gear_ratio, parking_brake_ind, check_engine_ind)
+            VALUES (1, 0, 0, 100, 20, 'N/N', false, false);
         </sql>
     </changeSet>
 

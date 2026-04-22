@@ -1,7 +1,6 @@
 package ca.nztan.backend.service;
 
 import ca.nztan.backend.dto.DashboardSnapshotDto;
-import ca.nztan.backend.dto.GearType;
 import ca.nztan.backend.entity.VehicleReading;
 import ca.nztan.backend.repository.VehicleReadingRepository;
 import ca.nztan.backend.simulator.VehicleState;
@@ -14,6 +13,9 @@ public class VehicleReadingService {
 
     private final static int VEHICLE_READING_ID = 1;
     private final static int CHECK_ENGINE_THRESHOLD = 800;
+    private final static int BATTERY_LOW_THRESHOLD = 20;
+    private final static int MOTOR_STATUS_THRESHOLD = 500;
+    private final static String GEAR_RATIO_PARK = "N/N";
 
     private final VehicleReadingRepository vehicleReadingRepository;
 
@@ -33,8 +35,11 @@ public class VehicleReadingService {
                 .setPowerKw(0)
                 .setBatteryLevel(0)
                 .setBatteryTemperature(0)
+                .setGearRatio(GEAR_RATIO_PARK)
                 .setParkingBrake(false)
-                .setCheckEngine(false);
+                .setCheckEngine(false)
+                .setBatteryLow(false)
+                .setMotorStatusWarning(false);
     }
 
     private VehicleReading toEntity(VehicleState vehicleState) {
@@ -44,7 +49,8 @@ public class VehicleReadingService {
                 .powerKw(vehicleState.getPowerKw())
                 .batteryLevel(vehicleState.getBatteryLevel())
                 .batteryTemperature(vehicleState.getBatteryTemperature())
-                .parkingBrade(GearType.P.equals(vehicleState.getGear()))
+                .gearRatio(vehicleState.getGearRatio())
+                .parkingBrade(GEAR_RATIO_PARK.equals(vehicleState.getGearRatio()))
                 .checkEngine(vehicleState.getMotorRpm() >= CHECK_ENGINE_THRESHOLD)
                 .build();
     }
@@ -55,7 +61,10 @@ public class VehicleReadingService {
                 .setPowerKw(vehicleReading.getPowerKw())
                 .setBatteryLevel(vehicleReading.getBatteryLevel())
                 .setBatteryTemperature(vehicleReading.getBatteryTemperature())
+                .setGearRatio(vehicleReading.getGearRatio())
                 .setParkingBrake(vehicleReading.getParkingBrade())
-                .setCheckEngine(vehicleReading.getCheckEngine());
+                .setCheckEngine(vehicleReading.getCheckEngine())
+                .setBatteryLow(vehicleReading.getBatteryLevel() <= BATTERY_LOW_THRESHOLD)
+                .setMotorStatusWarning(vehicleReading.getMotorRpm() >= MOTOR_STATUS_THRESHOLD);
     }
 }

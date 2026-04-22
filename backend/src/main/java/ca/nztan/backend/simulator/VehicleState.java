@@ -1,6 +1,5 @@
 package ca.nztan.backend.simulator;
 
-import ca.nztan.backend.dto.GearType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -11,5 +10,5 @@ public class VehicleState {
     private int powerKw;
     private int batteryLevel;
     private int batteryTemperature;
-    private GearType gear;
+    private String gearRatio;
 }

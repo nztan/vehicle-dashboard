@@ -7,5 +7,5 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class VehicleSettingDto {
     private Integer motorSpeed;
-    private Boolean chargingOn;
+    private Boolean charging;
 }

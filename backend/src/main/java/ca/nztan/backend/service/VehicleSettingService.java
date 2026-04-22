@@ -13,8 +13,8 @@ public class VehicleSettingService {
     private final static int VEHICLE_SETTING_ID = 1;
     private final VehicleSettingRepository vehicleSettingRepository;
 
-    public void save(VehicleSettingDto vehicleSetting) {
-        vehicleSettingRepository.save(toEntity(vehicleSetting));
+    public VehicleSettingDto save(VehicleSettingDto vehicleSetting) {
+        return toDto(vehicleSettingRepository.save(toEntity(vehicleSetting)));
     }
 
     public VehicleSettingDto get() {
@@ -26,20 +26,20 @@ public class VehicleSettingService {
     private VehicleSettingDto getDefaultVehicleSetting() {
         return new VehicleSettingDto()
                 .setMotorSpeed(0)
-                .setChargingOn(false);
+                .setCharging(false);
     }
 
     private VehicleSetting toEntity(VehicleSettingDto vehicleSetting) {
         return VehicleSetting.builder()
                 .id(VEHICLE_SETTING_ID)
                 .motorSpeed(vehicleSetting.getMotorSpeed())
-                .chargingOn(vehicleSetting.getChargingOn())
+                .chargingOn(vehicleSetting.getCharging())
                 .build();
     }
 
     private VehicleSettingDto toDto(VehicleSetting vehicleSetting) {
         return new VehicleSettingDto()
                 .setMotorSpeed(vehicleSetting.getMotorSpeed())
-                .setChargingOn(vehicleSetting.getChargingOn());
+                .setCharging(vehicleSetting.getChargingOn());
     }
 }

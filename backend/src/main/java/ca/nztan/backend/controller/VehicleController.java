@@ -21,7 +21,7 @@ public class VehicleController {
     }
 
     @PostMapping("/setting")
-    public void save(@RequestBody VehicleSettingDto setting) {
-        vehicleSettingService.save(setting);
+    public VehicleSettingDto save(@RequestBody VehicleSettingDto setting) {
+        return vehicleSettingService.save(setting);
     }
 }

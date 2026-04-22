@@ -10,6 +10,9 @@ public class DashboardSnapshotDto {
     private Integer powerKw;
     private Integer batteryLevel;
     private Integer batteryTemperature;
+    private String gearRatio;
     private Boolean parkingBrake;
     private Boolean checkEngine;
+    private Boolean batteryLow;
+    private Boolean motorStatusWarning;
 }
