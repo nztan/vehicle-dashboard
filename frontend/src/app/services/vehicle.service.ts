@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import {
-  BehaviorSubject,
-  distinctUntilChanged,
+  BehaviorSubject, distinctUntilChanged,
   map,
   Observable,
   of,
@@ -16,7 +15,7 @@ import { HttpClient } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { VehicleSetting } from '../models/vehicle-setting.model';
 
-const BASE_URI = './api/vehicles';
+const BASE_URI = '/api/vehicles';
 const POLLING_INTERVAL = 1200;
 
 @Injectable({
@@ -37,6 +36,7 @@ export class VehicleService {
       )
       : this.getStoppedDashboardSnapshot()),
     tap(snapshot => {
+      console.log(snapshot);
       this._latestDashboardSnapshot = snapshot;
     }),
     shareReplay({bufferSize: 1, refCount: true})
@@ -66,17 +66,9 @@ export class VehicleService {
   }
 
   private getDashboardSnapshot(): Observable<DashboardSnapshot> {
-    return of({
-      motorRPM: 500,
-      powerKw: 500,
-      gear: GearType.D,
-      batteryLevel: 50,
-      batteryTemperature: 30,
-      parkingBrakeWarning: false,
-      checkEngineWarning: true,
-      motorStatusWarning: false,
-    }).pipe(tap(a => console.log(a)));
-    // return this.httpClient.get<DashboardSnapshot>(`${BASE_URI}/snapshot`)
-    //   .pipe(tap(a => console.log(a)));
+    return this.httpClient.get<DashboardSnapshot>(`${BASE_URI}/snapshot`)
+      .pipe(tap(a => {
+        console.log(a);
+      }));
   }
 }
