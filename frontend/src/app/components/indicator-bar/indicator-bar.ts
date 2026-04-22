@@ -18,19 +18,17 @@ import { VehicleService } from '../../services/vehicle.service';
     LucideCircleParking
   ],
   templateUrl: './indicator-bar.html',
-  styleUrl: './indicator-bar.css',
+  host: {
+    class: 'block h-full min-h-0'
+  }
 })
 export class IndicatorBar {
   private vehicleService = inject(VehicleService);
 
   private snapshot = this.vehicleService.dashboardSnapshot;
 
-  batteryLevel = computed(() => this.snapshot()?.batteryLevel ?? 0);
-  parkingBrakeWarning = computed(() => this.snapshot()?.parkingBrakeWarning ?? false);
-  checkEngineWarning = computed(() => this.snapshot()?.checkEngineWarning ?? false);
-  motorStatusWarning = computed(() => this.snapshot()?.motorStatusWarning ?? false);
-
-  get isBatteryLow() {
-    return this.batteryLevel() <= 20;
-  }
+  batteryLowWarning = computed(() => this.snapshot()?.batteryLow);
+  parkingBrakeWarning = computed(() => this.snapshot()?.parkingBrake);
+  checkEngineWarning = computed(() => this.snapshot()?.checkEngine);
+  motorStatusWarning = computed(() => this.snapshot()?.motorStatusWarning);
 }

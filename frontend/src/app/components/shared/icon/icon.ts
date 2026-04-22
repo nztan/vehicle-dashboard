@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { getIconColor } from '../../../utils/get-theme.util';
+import { getDefaultIconColor } from '../../../utils/get-theme.util';
 
 @Component({
   selector: 'app-icon',
@@ -20,5 +20,5 @@ export class Icon {
   @Input() unit?: string;
   @Input() color?: string;
 
-  protected readonly getIconColor = getIconColor;
+  protected readonly getIconColor = getDefaultIconColor;
 }

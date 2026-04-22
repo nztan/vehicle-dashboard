@@ -1,15 +1,11 @@
 export interface DashboardSnapshot {
   motorRPM: number;
   powerKw: number;
-  gear: GearType;
+  gearRatio: string;
   batteryLevel: number;
   batteryTemperature: number;
-  parkingBrakeWarning: boolean;
-  checkEngineWarning: boolean;
+  parkingBrake: boolean;
+  checkEngine: boolean;
+  batteryLow: boolean;
   motorStatusWarning: boolean;
-}
-
-export enum GearType {
-  D = 'D',
-  P = 'P'
 }

@@ -12,7 +12,9 @@ import { VehicleService } from '../../services/vehicle.service';
     MenuBar
   ],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css',
+  host: {
+    class: 'block h-full min-h-0'
+  }
 })
 export class Dashboard implements OnInit {
   private vehicleService = inject(VehicleService);

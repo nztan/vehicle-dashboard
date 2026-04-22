@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import type { EChartsCoreOption } from 'echarts/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
-import { getIconColor } from '../../utils/get-theme.util';
+import { getDefaultIconColor } from '../../utils/get-theme.util';
 
 @Component({
   selector: 'app-gauge',
@@ -9,9 +9,9 @@ import { getIconColor } from '../../utils/get-theme.util';
     NgxEchartsDirective
   ],
   template: `
-    <div echarts [options]="options"></div>`,
+    <div class="h-full w-full" echarts [options]="options"></div>`,
   host: {
-    class: 'block w-full'
+    class: 'block h-full w-full min-h-0'
   }
 })
 export class Gauge {
@@ -31,12 +31,12 @@ export class Gauge {
             formatter: '{value}'
           },
           axisLabel: {
-            color: getIconColor(),
+            color: getDefaultIconColor(),
             fontSize: 14
           },
           pointer: {
             itemStyle: {
-              color: getIconColor()
+              color: getDefaultIconColor()
             }
           },
           itemStyle: {

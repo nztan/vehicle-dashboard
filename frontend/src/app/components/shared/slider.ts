@@ -62,6 +62,14 @@ export class Slider implements OnInit, ControlValueAccessor {
     this.onTouched = fn;
   }
 
+  setDisabledState(isDisabled: boolean): void {
+    if (isDisabled) {
+      this.formControl.disable();
+    } else {
+      this.formControl.enable();
+    }
+  }
+
   ngOnInit() {
     this.formControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))

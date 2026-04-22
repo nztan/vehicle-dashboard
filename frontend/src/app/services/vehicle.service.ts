@@ -3,14 +3,13 @@ import {
   BehaviorSubject, distinctUntilChanged,
   map,
   Observable,
-  of,
   retry,
   shareReplay,
   switchMap,
   tap,
   timer
 } from 'rxjs';
-import { DashboardSnapshot, GearType } from '../models/dashboard-snapshot.model';
+import { DashboardSnapshot } from '../models/dashboard-snapshot.model';
 import { HttpClient } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { VehicleSetting } from '../models/vehicle-setting.model';
@@ -25,50 +24,38 @@ export class VehicleService {
   private httpClient = inject(HttpClient);
   private _vehicleSetting$ = new BehaviorSubject<VehicleSetting>({motorSpeed: 0, charging: false});
   private _latestDashboardSnapshot?: DashboardSnapshot;
-
   private _dashboardSnapshot$ = this._vehicleSetting$.pipe(
-    map(setting => setting.motorSpeed !== 0),
+    map(setting => this.isPolling(setting)),
     distinctUntilChanged(),
     switchMap(isPolling => isPolling
       ? timer(0, POLLING_INTERVAL).pipe(
         switchMap(() => this.getDashboardSnapshot()),
         retry({delay: 500})
       )
-      : this.getStoppedDashboardSnapshot()),
+      : this.getDashboardSnapshot()),
     tap(snapshot => {
-      console.log(snapshot);
       this._latestDashboardSnapshot = snapshot;
     }),
     shareReplay({bufferSize: 1, refCount: true})
   );
-
-  readonly dashboardSnapshot = toSignal(this._dashboardSnapshot$, {initialValue: undefined});
 
   getVehicleSetting(): VehicleSetting {
     return this._vehicleSetting$.value;
   }
 
   updateVehicleSetting(vehicleSetting: VehicleSetting): void {
-    this._vehicleSetting$.next(vehicleSetting);
+    this.httpClient.post<VehicleSetting>(`${BASE_URI}/setting`, vehicleSetting)
+      .subscribe(setting => this._vehicleSetting$.next(setting));
   }
 
-  private getStoppedDashboardSnapshot(): Observable<DashboardSnapshot> {
-    return of({
-      motorRPM: 0,
-      powerKw: 0,
-      gear: GearType.P,
-      batteryLevel: this._latestDashboardSnapshot?.batteryLevel ?? 0,
-      batteryTemperature: this._latestDashboardSnapshot?.batteryTemperature ?? 0,
-      parkingBrakeWarning: this._latestDashboardSnapshot?.parkingBrakeWarning ?? false,
-      checkEngineWarning: this._latestDashboardSnapshot?.checkEngineWarning ?? false,
-      motorStatusWarning: this._latestDashboardSnapshot?.motorStatusWarning ?? false,
-    });
-  }
+  readonly dashboardSnapshot = toSignal(this._dashboardSnapshot$, {initialValue: undefined});
+  readonly vehicleSetting = toSignal(this._vehicleSetting$, {initialValue: {motorSpeed: 0, charging: false}});
 
   private getDashboardSnapshot(): Observable<DashboardSnapshot> {
-    return this.httpClient.get<DashboardSnapshot>(`${BASE_URI}/snapshot`)
-      .pipe(tap(a => {
-        console.log(a);
-      }));
+    return this.httpClient.get<DashboardSnapshot>(`${BASE_URI}/snapshot`);
+  }
+
+  private isPolling(vehicleSetting: VehicleSetting): boolean {
+    return vehicleSetting.motorSpeed !== 0 || (this._latestDashboardSnapshot?.motorRPM ?? 0) > 0 || vehicleSetting.charging;
   }
 }

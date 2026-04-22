@@ -1,5 +1,5 @@
-<div class="flex flex-row p-4 gap-4 justify-between border-2 border-mist-800">
-  <div>
+<div class="flex h-full min-h-0 flex-row items-center justify-between px-4 gap-4 border-2 border-mist-800">
+  <div class="flex items-center gap-4">
     <button class="cursor-pointer hover:opacity-50">
       <app-icon>
         <svg icon lucideCog class="size-24"/>
@@ -17,7 +17,7 @@
     </button>
   </div>
 
-  <div>
+  <div class="flex items-center">
     <button class="cursor-pointer hover:opacity-50">
       <app-icon>
         <svg icon lucideMenu class="size-24"/>
@@ -25,9 +25,9 @@
     </button>
   </div>
 
-  <div>
-    <button class="cursor-pointer hover:opacity-50">
-      <app-icon>
+  <div class="flex items-center">
+    <button class="cursor-pointer hover:opacity-50 disabled:cursor-not-allowed disabled:opacity-50" (click)="toggleCharging()" [disabled]="canCharge">
+      <app-icon [color]="iconColor">
         <svg icon lucidePlugZap class="size-24"/>
       </app-icon>
     </button>
