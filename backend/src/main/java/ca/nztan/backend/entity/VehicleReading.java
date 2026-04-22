@@ -56,6 +56,7 @@ public class VehicleReading {
         vehicleReading.batteryTemperature = batteryTemperature;
         vehicleReading.parkingBrade = parkingBrade;
         vehicleReading.checkEngine = checkEngine;
+        vehicleReading.recordedAt = LocalDate.now();
         return vehicleReading;
     }
 }

@@ -5,12 +5,12 @@ import ca.nztan.backend.entity.VehicleReading;
 import ca.nztan.backend.service.UserInputService;
 import ca.nztan.backend.service.VehicleReadingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class VehicleSimulator {
 
@@ -48,7 +48,7 @@ public class VehicleSimulator {
 
         // set up motorRPM boundary with motor speed, powerKW varies with the motorRPM
         // using random number to simulate realistic behavior
-        int targetMotorRpm = MOTOR_RPM_BY_SPEED[userInput.getMotorSpeed()] + random();
+        int targetMotorRpm = MOTOR_RPM_BY_SPEED[userInput.getMotorSpeed()];
         int targetPowerKW = userInput.getChargingOn() ? MIN_POWER_KW : (targetMotorRpm * MAX_POWER_KW / MOTOR_RPM_BY_SPEED[MOTOR_RPM_BY_SPEED.length - 1]);
 
         VehicleSimulatorState newState = new VehicleSimulatorState()
@@ -58,6 +58,8 @@ public class VehicleSimulator {
                 .setBatteryTemperature(calculateBatteryTemperature(userInput, previousState.getBatteryTemperature()));
         vehicleReadingService.save(assemble(newState, userInput));
         previousState = newState;
+
+        log.debug("Simulated vehicle with user input: {}, and state updated: {}", userInput, newState);
     }
 
     private VehicleReading assemble(VehicleSimulatorState vehicleSimulatorState, UserInputDto userInput) {
@@ -103,9 +105,5 @@ public class VehicleSimulator {
             return Math.max(current - step, target);
         }
         return current;
-    }
-
-    private int random() {
-        return ThreadLocalRandom.current().nextInt(-10, 10);
     }
 }

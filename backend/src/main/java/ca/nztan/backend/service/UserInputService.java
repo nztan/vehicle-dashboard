@@ -18,7 +18,11 @@ public class UserInputService {
     }
 
     public UserInputDto get() {
-        return toDto(userInputRepository.getReferenceById(VEHICLE_SETTING_ID));
+        return toDto(userInputRepository.findById(VEHICLE_SETTING_ID)
+                .orElse(new UserInput()
+                        .setMotorSpeed(0)
+                        .setChargingOn(false)
+                        ));
     }
 
     private UserInput toEntity(UserInputDto vehicleSetting) {
