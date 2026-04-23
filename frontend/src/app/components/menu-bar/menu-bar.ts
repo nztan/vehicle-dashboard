@@ -4,6 +4,7 @@ import { LucideCog, LucideMenu, LucidePlugZap, LucideSmartphoneCharging } from '
 import { BatteryTemperature } from '../shared/icon/battery-temperature';
 import { VehicleService } from '../../services/vehicle.service';
 import { getChargingColor, getDefaultIconColor } from '../../utils/get-theme.util';
+import { VehicleSetting } from '../../models/vehicle-setting.model';
 
 @Component({
   selector: 'app-menu-bar',
@@ -30,7 +31,7 @@ export class MenuBar {
     this.vehicleService.updateVehicleSetting({
       charging: !this.charging(),
       motorSpeed: this.motorSpeed()
-    });
+    } as VehicleSetting);
   }
 
   get iconColor(): string {
