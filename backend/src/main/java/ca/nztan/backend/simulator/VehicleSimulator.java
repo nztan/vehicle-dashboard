@@ -8,6 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -32,14 +37,17 @@ public class VehicleSimulator {
 
     private final VehicleReadingService vehicleReadingService;
     private final VehicleSettingService vehicleSettingService;
-    private VehicleState previousState;
+    private final Map<UUID, VehicleState> previousStates = new HashMap<>();
 
     @Scheduled(fixedRate = 1200)
     public void simulate() {
-        VehicleSettingDto vehicleSetting = vehicleSettingService.get();
-        if (previousState == null) {
-            previousState = getDefaultState();
-        }
+        List<VehicleSettingDto> vehicleSettings = vehicleSettingService.findAllWithin5Minutes();
+        vehicleSettings.forEach(this::simulateVehicle);
+    }
+
+    private void simulateVehicle(VehicleSettingDto vehicleSetting) {
+        VehicleState previousState = previousStates.getOrDefault(vehicleSetting.getVehicleId(), getDefaultState());
+
         // reset motor speed when battery is empty or charging
         if (previousState.getBatteryLevel() == 0 || vehicleSetting.getCharging()) {
             vehicleSetting.setMotorSpeed(0);
@@ -55,10 +63,14 @@ public class VehicleSimulator {
                 .setBatteryLevel(calculateBatteryLevel(vehicleSetting, previousState.getBatteryLevel()))
                 .setBatteryTemperature(calculateBatteryTemperature(vehicleSetting, previousState.getBatteryTemperature()));
         newState.setGearRatio(vehicleSetting.getMotorSpeed() == 0 ? GEAR_RATIO_PARK : GEAR_RATIO_MOVING);
-        vehicleReadingService.save(newState);
-        previousState = newState;
+        vehicleReadingService.save(vehicleSetting.getVehicleId(), newState);
+        previousStates.put(vehicleSetting.getVehicleId(), newState);
 
-        log.debug("Simulated vehicle with user input: {}, and state updated: {}", vehicleSetting, newState);
+        if (vehicleSetting.getCharging()) {
+            log.debug("Vehicle {} is charging, vehicle state: {}", vehicleSetting.getVehicleId(), newState);
+        } else {
+            log.debug("Vehicle {} is moving in {}, vehicle state {}", vehicleSetting.getVehicleId(), vehicleSetting.getMotorSpeed(), newState);
+        }
     }
 
     private VehicleState getDefaultState() {

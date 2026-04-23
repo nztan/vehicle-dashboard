@@ -8,6 +8,8 @@ import ca.nztan.backend.service.VehicleSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("api/vehicles")
 @RequiredArgsConstructor
@@ -16,15 +18,21 @@ public class VehicleController {
     private final VehicleReadingService vehicleReadingService;
     private final VehicleSettingService vehicleSettingService;
 
-    @GetMapping("/snapshot")
-    public DashboardSnapshotDto getSnapshot() {
-        VehicleReadingDto dashboard = vehicleReadingService.get();
-        VehicleSettingDto vehicleSetting = vehicleSettingService.get();
+    @GetMapping("/snapshot/{vehicleId}")
+    public DashboardSnapshotDto getSnapshot(@PathVariable UUID vehicleId) {
+        VehicleReadingDto dashboard = vehicleReadingService.get(vehicleId);
+        VehicleSettingDto vehicleSetting = vehicleSettingService.get(vehicleId);
         return toDashboardSnapshotDto(dashboard, vehicleSetting);
     }
 
     @PostMapping("/setting")
-    public VehicleSettingDto save(@RequestBody VehicleSettingDto setting) {
+    public VehicleSettingDto createSetting(@RequestBody VehicleSettingDto setting) {
+        return vehicleSettingService.save(setting);
+    }
+
+    @PutMapping("/setting/{vehicleId}")
+    public VehicleSettingDto updateSetting(@PathVariable UUID vehicleId, @RequestBody VehicleSettingDto setting) {
+        setting.setVehicleId(vehicleId);
         return vehicleSettingService.save(setting);
     }
 

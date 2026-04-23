@@ -1,13 +1,14 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { Observable, retry, shareReplay, switchMap, tap, timer } from 'rxjs';
+import { distinctUntilChanged, Observable, retry, shareReplay, switchMap, tap, timer } from 'rxjs';
 import { DashboardSnapshot } from '../models/dashboard-snapshot.model';
 import { HttpClient } from '@angular/common/http';
 import { VehicleSetting } from '../models/vehicle-setting.model';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { VehicleReading } from '../models/vehicle-reading.model';
 
 const BASE_URI = '/api/vehicles';
 const POLLING_INTERVAL = 1200;
+const SESSION_VEHICLE_ID_KEY = 'vehicle_id';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,18 @@ const POLLING_INTERVAL = 1200;
 export class VehicleService {
   private httpClient = inject(HttpClient);
   private destroyRef = inject(DestroyRef);
+
+  private readonly _vehicleId$ = signal<string | null>(
+    sessionStorage.getItem(SESSION_VEHICLE_ID_KEY) ?? null
+  )
   private readonly _dashboardSnapshot$ = signal<DashboardSnapshot | null>(null);
+  private readonly shouldPoll = computed(() => {
+    const setting = this.vehicleSetting();
+    const reading = this.vehicleReading();
+    return (setting?.motorSpeed ?? 0) > 0
+      || (setting?.charging ?? false)
+      || (reading?.motorRPM ?? 0) > 0;
+  });
 
   readonly vehicleReading = computed<VehicleReading | undefined>(
     () => this._dashboardSnapshot$()?.vehicleReading
@@ -25,30 +37,39 @@ export class VehicleService {
   );
 
   constructor() {
-    this.startPolling();
+    if (this._vehicleId$()) {
+      this.startPolling();
+    } else {
+      this.createVehicleSetting({charging: false, motorSpeed: 0} as VehicleSetting).subscribe(_ => this.startPolling());
+    }
   }
 
-  startPolling() {
-    timer(0, POLLING_INTERVAL).pipe(
-      switchMap(() => this.fetchDashboardSnapshot()),
-      retry({delay: POLLING_INTERVAL}),
-      shareReplay({bufferSize: 1, refCount: true}),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(snapshot => {
-      this._dashboardSnapshot$.update(prev => ({
-        // only load vehicle setting on init, otherwise always take user's input
-        vehicleSetting: prev?.vehicleSetting ?? snapshot.vehicleSetting,
-        vehicleReading: snapshot.vehicleReading
-      }));
-    });
+  createVehicleSetting(setting: VehicleSetting): Observable<VehicleSetting> {
+    return this.httpClient.post<VehicleSetting>(`${BASE_URI}/setting`, setting)
+      .pipe(
+        tap(setting => {
+          sessionStorage.setItem(SESSION_VEHICLE_ID_KEY, setting.vehicleId!);
+          this._vehicleId$.set(setting.vehicleId!);
+          this._dashboardSnapshot$.set({
+            vehicleSetting: setting,
+            vehicleReading: this._dashboardSnapshot$()?.vehicleReading ?? {
+              motorRPM: 0, powerKw: 0, gearRatio: 'N/N',
+              batteryLevel: 0, batteryTemperature: 0,
+              parkingBrake: true, checkEngine: false,
+              batteryLow: false, motorStatusWarning: false
+            }
+          })
+        })
+      );
   }
 
-  updateVehicleSetting(setting: VehicleSetting) {
-    this._dashboardSnapshot$.update(prev => prev
-      ? {...prev, vehicleSetting: setting}
-      : null
-    );
-    this.httpClient.post<VehicleSetting>(`${BASE_URI}/setting`, setting).subscribe(setting => {
+  updateVehicleSetting(setting: VehicleSetting): void {
+    const vehicleId = this._vehicleId$();
+    if (!vehicleId) {
+      return;
+    }
+
+    this.httpClient.put<VehicleSetting>(`${BASE_URI}/setting/${vehicleId}`, setting).subscribe(setting => {
       this._dashboardSnapshot$.update(prev => (
         prev ? {...prev, vehicleSetting: setting} : null
       ));
@@ -56,6 +77,24 @@ export class VehicleService {
   }
 
   private fetchDashboardSnapshot(): Observable<DashboardSnapshot> {
-    return this.httpClient.get<DashboardSnapshot>(`${BASE_URI}/snapshot`);
+    return this.httpClient.get<DashboardSnapshot>(`${BASE_URI}/snapshot/${this._vehicleId$()}`);
+  }
+
+  private startPolling() {
+    toObservable(this.shouldPoll).pipe(
+        distinctUntilChanged(),
+        switchMap(isPolling => isPolling
+          ? timer(0, POLLING_INTERVAL).pipe(
+            switchMap(() => this.fetchDashboardSnapshot()),
+            retry({delay: 500}))
+          : this.fetchDashboardSnapshot()),
+        shareReplay({bufferSize: 1, refCount: true}),
+        takeUntilDestroyed(this.destroyRef))
+      .subscribe(snapshot => {
+        this._dashboardSnapshot$.update(prev => ({
+          vehicleSetting: prev?.vehicleSetting ?? snapshot.vehicleSetting,
+          vehicleReading: snapshot.vehicleReading
+        }));
+      })
   }
 }

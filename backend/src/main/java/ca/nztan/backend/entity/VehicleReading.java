@@ -7,19 +7,21 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "vehicle_reading")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "vehicleId")
 @Accessors(chain = true)
 public class VehicleReading {
 
     @Id
-    @Column(name = "id", nullable = false)
-    private Integer id;
+    @Column(name = "vehicle_id", nullable = false)
+    private UUID vehicleId;
 
     @Setter
     @Column(name = "motor_rpm", nullable = false)

@@ -10,6 +10,7 @@ import { VehicleService } from '../../services/vehicle.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { distinctUntilChanged } from 'rxjs';
 import { Gear } from '../shared/icon/gear';
+import { VehicleSetting } from '../../models/vehicle-setting.model';
 
 @Component({
   selector: 'app-main-panel',
@@ -82,7 +83,7 @@ export class MainPanel implements OnInit {
         this.vehicleService.updateVehicleSetting({
           motorSpeed: motorSpeed,
           charging: currentSetting?.charging ?? false
-        });
+        } as VehicleSetting);
       });
   }
 }

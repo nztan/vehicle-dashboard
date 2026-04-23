@@ -7,11 +7,12 @@ import ca.nztan.backend.simulator.VehicleState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class VehicleReadingService {
 
-    private final static int VEHICLE_READING_ID = 1;
     private final static int CHECK_ENGINE_THRESHOLD = 800;
     private final static int BATTERY_LOW_THRESHOLD = 20;
     private final static int MOTOR_STATUS_THRESHOLD = 500;
@@ -19,14 +20,14 @@ public class VehicleReadingService {
 
     private final VehicleReadingRepository vehicleReadingRepository;
 
-    public VehicleReadingDto get() {
-        return vehicleReadingRepository.findById(VEHICLE_READING_ID)
+    public VehicleReadingDto get(UUID vehicleId) {
+        return vehicleReadingRepository.findById(vehicleId)
                 .map(this::toDto)
                 .orElseGet(this::getDefault);
     }
 
-    public void save(VehicleState vehicleState) {
-        vehicleReadingRepository.save(toEntity(vehicleState));
+    public void save(UUID vehicleId, VehicleState vehicleState) {
+        vehicleReadingRepository.save(toEntity(vehicleId, vehicleState));
     }
 
     private VehicleReadingDto getDefault() {
@@ -42,9 +43,9 @@ public class VehicleReadingService {
                 .setMotorStatusWarning(false);
     }
 
-    private VehicleReading toEntity(VehicleState vehicleState) {
+    private VehicleReading toEntity(UUID vehicleId, VehicleState vehicleState) {
         return VehicleReading.builder()
-                .id(VEHICLE_READING_ID)
+                .vehicleId(vehicleId)
                 .motorRpm(vehicleState.getMotorRpm())
                 .powerKw(vehicleState.getPowerKw())
                 .batteryLevel(vehicleState.getBatteryLevel())
