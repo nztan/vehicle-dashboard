@@ -8,7 +8,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [SliderModule, FormsModule, ReactiveFormsModule],
   template: `
     <div class="flex flex-col items-center slider-dark">
-      <p-slider [formControl]="formControl" step="1" min="0" max="4" class="w-full"/>
+      <p-slider [formControl]="formControl" [step]="step" [min]="min" [max]="max" class="w-full"/>
       <div class="mt-2 flex justify-between text-xs text-gray-400 w-full">
         @for (step of steps; track step) {
           <span>{{ step === 0 ? 'OFF' : step }}</span>
@@ -40,6 +40,7 @@ export class Slider implements OnInit, ControlValueAccessor {
   @Input() min: number = 0;
   @Input() max: number = 4;
   @Input() step: number = 1;
+  value: number = 0;
 
   formControl: FormControl<number | null> = new FormControl<number>(0);
 
@@ -51,7 +52,8 @@ export class Slider implements OnInit, ControlValueAccessor {
   private destroyRef = inject(DestroyRef);
 
   writeValue(value: number): void {
-    this.formControl.setValue(value);
+    this.value = value ?? 0;
+    this.formControl.setValue(value, {emitEvent: false});
   }
 
   registerOnChange(fn: (value: number | null) => void): void {
@@ -64,9 +66,9 @@ export class Slider implements OnInit, ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     if (isDisabled) {
-      this.formControl.disable();
+      this.formControl.disable({emitEvent: false});
     } else {
-      this.formControl.enable();
+      this.formControl.enable({emitEvent: false});
     }
   }
 

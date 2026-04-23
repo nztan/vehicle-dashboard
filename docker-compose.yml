@@ -11,8 +11,9 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d task_manager" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d vehicle_dashboard" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -27,17 +28,43 @@ services:
       PGADMIN_DEFAULT_PASSWORD: password123
     ports:
       - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   # backend
   backend:
     build: ./backend
     container_name: vehicle_dashboard_service
-    ports:
-      - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/task_manager
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/vehicle_dashboard
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password123
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_LIQUIBASE_DEFAULTSCHEMA: vehicle_dashboard
+      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: vehicle_dashboard
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vehicle_dashboard_nginx
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  pgadmin_data:

@@ -31,7 +31,6 @@ export class MenuBar {
       charging: !this.charging(),
       motorSpeed: this.motorSpeed()
     });
-    console.log(this.setting);
   }
 
   get iconColor(): string {

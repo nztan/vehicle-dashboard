@@ -51,11 +51,11 @@ export class MainPanel implements OnInit {
 
   constructor() {
     effect(() => {
-      console.log(this.isMotorSpeedControlDisabled());
       if (this.isMotorSpeedControlDisabled()) {
-        this.motorSpeedControl.disable({ emitEvent: false });
+        this.motorSpeedControl.setValue(0);
+        this.motorSpeedControl.disable({emitEvent: false});
       } else {
-        this.motorSpeedControl.enable({ emitEvent: false });
+        this.motorSpeedControl.enable({emitEvent: false});
       }
     });
   }
@@ -71,7 +71,7 @@ export class MainPanel implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((motorSpeed) => {
-        const currentSetting = this.vehicleService.getVehicleSetting();
+        const currentSetting = this.vehicleService.vehicleSetting();
         this.vehicleService.updateVehicleSetting({
           ...currentSetting,
           motorSpeed

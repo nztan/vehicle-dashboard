@@ -8,7 +8,7 @@ COPY src ./src
 RUN ./gradlew bootJar --no-daemon -x test
 
 # java
-FROM eclipse-termurin:17-jre
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080
