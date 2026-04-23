@@ -1,8 +1,14 @@
 package ca.nztan.backend.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "vehicle_setting")
@@ -10,12 +16,13 @@ import lombok.experimental.Accessors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "vehicleId")
 @Accessors(chain = true)
 public class VehicleSetting {
 
     @Id
-    @Column(name = "id", nullable = false)
-    private Integer id;
+    @Column(name = "vehicle_id", nullable = false)
+    private UUID vehicleId;
 
     @Setter
     @Column(name = "motor_speed", nullable = false)
@@ -23,5 +30,8 @@ public class VehicleSetting {
 
     @Setter
     @Column(name = "charging_ind", nullable = false)
-    private Boolean chargingOn;
+    private Boolean charging;
+
+    @Column(name = "recorded_at", nullable = false)
+    private LocalDateTime recordedAt;
 }

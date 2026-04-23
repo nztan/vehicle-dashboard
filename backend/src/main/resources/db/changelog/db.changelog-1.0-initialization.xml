@@ -6,10 +6,28 @@
             http://www.liquibase.org/xml/ns/dbchangelog
            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
+    <changeSet id="create-vehicle_setting" author="nztan">
+        <createTable tableName="vehicle_setting">
+            <column name="vehicle_id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="motor_speed" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="charging_ind" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recorded_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
     <changeSet id="create-vehicle_reading" author="nztan">
         <createTable tableName="vehicle_reading">
-            <column name="id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
+            <column name="vehicle_id" type="uuid">
+                <constraints primaryKey="true" nullable="false" foreignKeyName="fk_vehicle_id"
+                             referencedTableName="vehicle_setting" referencedColumnNames="vehicle_id"/>
             </column>
             <column name="motor_rpm" type="int">
                 <constraints nullable="false"/>
@@ -33,33 +51,5 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-    </changeSet>
-
-    <changeSet id="create-vehicle_setting" author="nztan">
-        <createTable tableName="vehicle_setting">
-            <column name="id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="motor_speed" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="charging_ind" type="boolean">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="initialize-vehicle_reading" author="nztan" dbms="postgresql">
-        <sql>
-            INSERT INTO vehicle_reading (id, motor_rpm, power_kw, battery_level, battery_temperature, gear_ratio, parking_brake_ind, check_engine_ind)
-            VALUES (1, 0, 0, 100, 20, 'N/N', false, false);
-        </sql>
-    </changeSet>
-
-    <changeSet id="initialize-vehicle_setting" author="nztan" dbms="postgresql">
-        <sql>
-            INSERT INTO vehicle_setting (id, motor_speed, charging_ind)
-            VALUES (1, 0, false);
-        </sql>
     </changeSet>
 </databaseChangeLog>
