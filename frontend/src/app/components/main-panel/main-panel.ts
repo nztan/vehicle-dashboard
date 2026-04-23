@@ -34,17 +34,17 @@ export class MainPanel implements OnInit {
   private destroyRef = inject(DestroyRef);
   private vehicleService = inject(VehicleService);
 
-  private snapshot = this.vehicleService.dashboardSnapshot;
+  private reading = this.vehicleService.vehicleReading;
   private setting = this.vehicleService.vehicleSetting;
-  motorRpm = computed(() => this.snapshot()?.motorRPM ?? 0);
-  powerKw = computed(() => this.snapshot()?.powerKw ?? 0);
-  gearRatio = computed(() => this.snapshot()?.gearRatio ?? 'N/N');
-  batteryLevel = computed(() => this.snapshot()?.batteryLevel ?? 0);
-  batteryTemperature = computed(() => this.snapshot()?.batteryTemperature ?? 0);
+  motorRpm = computed(() => this.reading()?.motorRPM ?? 0);
+  powerKw = computed(() => this.reading()?.powerKw ?? 0);
+  gearRatio = computed(() => this.reading()?.gearRatio ?? 'N/N');
+  batteryLevel = computed(() => this.reading()?.batteryLevel ?? 0);
+  batteryTemperature = computed(() => this.reading()?.batteryTemperature ?? 0);
   isMotorSpeedControlDisabled = computed(() => {
     const setting = this.setting();
-    const snapshot = this.snapshot();
-    return setting?.charging || snapshot?.batteryLevel === 0;
+    const reading = this.reading();
+    return setting?.charging || reading?.batteryLevel === 0;
   });
 
   motorSpeedControl = new FormControl<number>(0, {nonNullable: true});
@@ -56,6 +56,13 @@ export class MainPanel implements OnInit {
         this.motorSpeedControl.disable({emitEvent: false});
       } else {
         this.motorSpeedControl.enable({emitEvent: false});
+      }
+    });
+
+    effect(() => {
+      const speed = this.setting()?.motorSpeed ?? 0;
+      if (this.motorSpeedControl.value !== speed) {
+        this.motorSpeedControl.setValue(speed, {emitEvent: false});
       }
     });
   }
@@ -73,8 +80,8 @@ export class MainPanel implements OnInit {
       .subscribe((motorSpeed) => {
         const currentSetting = this.vehicleService.vehicleSetting();
         this.vehicleService.updateVehicleSetting({
-          ...currentSetting,
-          motorSpeed
+          motorSpeed: motorSpeed,
+          charging: currentSetting?.charging ?? false
         });
       });
   }

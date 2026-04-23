@@ -1,6 +1,9 @@
 package ca.nztan.backend.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -40,7 +43,7 @@ public class VehicleReading {
 
     @Setter
     @Column(name = "parking_brake_ind", nullable = false)
-    private Boolean parkingBrade;
+    private Boolean parkingBrake;
 
     @Setter
     @Column(name = "check_engine_ind", nullable = false)

@@ -1,6 +1,7 @@
 package ca.nztan.backend.controller;
 
 import ca.nztan.backend.dto.DashboardSnapshotDto;
+import ca.nztan.backend.dto.VehicleReadingDto;
 import ca.nztan.backend.dto.VehicleSettingDto;
 import ca.nztan.backend.service.VehicleReadingService;
 import ca.nztan.backend.service.VehicleSettingService;
@@ -17,11 +18,19 @@ public class VehicleController {
 
     @GetMapping("/snapshot")
     public DashboardSnapshotDto getSnapshot() {
-        return vehicleReadingService.getDashboardSnapshot();
+        VehicleReadingDto dashboard = vehicleReadingService.get();
+        VehicleSettingDto vehicleSetting = vehicleSettingService.get();
+        return toDashboardSnapshotDto(dashboard, vehicleSetting);
     }
 
     @PostMapping("/setting")
     public VehicleSettingDto save(@RequestBody VehicleSettingDto setting) {
         return vehicleSettingService.save(setting);
+    }
+
+    private DashboardSnapshotDto toDashboardSnapshotDto(VehicleReadingDto dashboard, VehicleSettingDto vehicleSetting) {
+        return new DashboardSnapshotDto()
+                .setVehicleReading(dashboard)
+                .setVehicleSetting(vehicleSetting);
     }
 }

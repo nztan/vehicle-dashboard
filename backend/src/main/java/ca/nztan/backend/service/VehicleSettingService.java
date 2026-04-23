@@ -20,10 +20,10 @@ public class VehicleSettingService {
     public VehicleSettingDto get() {
         return vehicleSettingRepository.findById(VEHICLE_SETTING_ID)
                 .map(this::toDto)
-                .orElseGet(this::getDefaultVehicleSetting);
+                .orElseGet(this::getDefault);
     }
 
-    private VehicleSettingDto getDefaultVehicleSetting() {
+    private VehicleSettingDto getDefault() {
         return new VehicleSettingDto()
                 .setMotorSpeed(0)
                 .setCharging(false);

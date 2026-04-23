@@ -1,11 +1,7 @@
+import { VehicleSetting } from './vehicle-setting.model';
+import { VehicleReading } from './vehicle-reading.model';
+
 export interface DashboardSnapshot {
-  motorRPM: number;
-  powerKw: number;
-  gearRatio: string;
-  batteryLevel: number;
-  batteryTemperature: number;
-  parkingBrake: boolean;
-  checkEngine: boolean;
-  batteryLow: boolean;
-  motorStatusWarning: boolean;
+  vehicleSetting: VehicleSetting;
+  vehicleReading: VehicleReading;
 }

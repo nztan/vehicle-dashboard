@@ -25,10 +25,10 @@ import { VehicleService } from '../../services/vehicle.service';
 export class IndicatorBar {
   private vehicleService = inject(VehicleService);
 
-  private snapshot = this.vehicleService.dashboardSnapshot;
+  private reading = this.vehicleService.vehicleReading;
 
-  batteryLowWarning = computed(() => this.snapshot()?.batteryLow);
-  parkingBrakeWarning = computed(() => this.snapshot()?.parkingBrake);
-  checkEngineWarning = computed(() => this.snapshot()?.checkEngine);
-  motorStatusWarning = computed(() => this.snapshot()?.motorStatusWarning);
+  batteryLowWarning = computed(() => this.reading()?.batteryLow);
+  parkingBrakeWarning = computed(() => this.reading()?.parkingBrake);
+  checkEngineWarning = computed(() => this.reading()?.checkEngine);
+  motorStatusWarning = computed(() => this.reading()?.motorStatusWarning);
 }
