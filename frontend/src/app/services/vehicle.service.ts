@@ -18,10 +18,7 @@ export class VehicleService {
   private readonly _dashboardSnapshot$ = signal<DashboardSnapshot | null>(null);
 
   readonly vehicleReading = computed<VehicleReading | undefined>(
-    () => {
-      console.log(this._dashboardSnapshot$()?.vehicleReading);
-      return this._dashboardSnapshot$()?.vehicleReading;
-    }
+    () => this._dashboardSnapshot$()?.vehicleReading
   );
   readonly vehicleSetting = computed<VehicleSetting | undefined>(
     () => this._dashboardSnapshot$()?.vehicleSetting
@@ -34,7 +31,6 @@ export class VehicleService {
   startPolling() {
     timer(0, POLLING_INTERVAL).pipe(
       switchMap(() => this.fetchDashboardSnapshot()),
-      tap(snapshot => console.log('DashboardSnapshot', snapshot)),
       retry({delay: POLLING_INTERVAL}),
       shareReplay({bufferSize: 1, refCount: true}),
       takeUntilDestroyed(this.destroyRef)
