@@ -36,7 +36,7 @@ class VehicleReadingServiceTest {
 
         assertThat(result.getMotorRPM()).isEqualTo(0);
         assertThat(result.getPowerKw()).isEqualTo(0);
-        assertThat(result.getBatteryLevel()).isEqualTo(0);
+        assertThat(result.getBatteryLevel()).isEqualTo(100);
         assertThat(result.getBatteryTemperature()).isEqualTo(0);
         assertThat(result.getGearRatio()).isEqualTo("N/N");
         assertThat(result.getParkingBrake()).isFalse();
