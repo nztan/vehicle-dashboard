@@ -12,7 +12,7 @@
     </div>
     <div class="card flex h-full min-h-0 w-full basis-1/3 flex-col items-center justify-center p-4">
       <span class="pb-4">Motor Speed Setting</span>
-      <app-slider [formControl]="motorSpeedControl"/>
+      <app-slider [formControl]="motorSpeedControl" (commit)="onMotorSpeedCommit($event)"/>
     </div>
   </div>
 </div>

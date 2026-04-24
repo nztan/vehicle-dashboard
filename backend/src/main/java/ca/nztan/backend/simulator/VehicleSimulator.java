@@ -39,7 +39,7 @@ public class VehicleSimulator {
     private final VehicleSettingService vehicleSettingService;
     private final Map<UUID, VehicleState> previousStates = new HashMap<>();
 
-    @Scheduled(fixedRate = 1200)
+    @Scheduled(fixedRate = 2000)
     public void simulate() {
         List<VehicleSettingDto> vehicleSettings = vehicleSettingService.findAllWithin5Minutes();
         vehicleSettings.forEach(this::simulateVehicle);

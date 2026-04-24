@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "vehicle_setting")
+@Table(name = "vehicle_setting", schema = "vehicle_dashboard")
 @Getter
 @Builder
 @AllArgsConstructor

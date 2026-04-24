@@ -7,7 +7,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { VehicleReading } from '../models/vehicle-reading.model';
 
 const BASE_URI = '/api/vehicles';
-const POLLING_INTERVAL = 1200;
+const POLLING_INTERVAL = 2000;
 const SESSION_VEHICLE_ID_KEY = 'vehicle_id';
 
 @Injectable({
@@ -54,7 +54,7 @@ export class VehicleService {
             vehicleSetting: setting,
             vehicleReading: this._dashboardSnapshot$()?.vehicleReading ?? {
               motorRPM: 0, powerKw: 0, gearRatio: 'N/N',
-              batteryLevel: 0, batteryTemperature: 0,
+              batteryLevel: 100, batteryTemperature: 0,
               parkingBrake: true, checkEngine: false,
               batteryLow: false, motorStatusWarning: false
             }

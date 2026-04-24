@@ -1,4 +1,4 @@
-import { Component, DestroyRef, forwardRef, inject, Input, OnInit } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, forwardRef, inject, Input, OnInit, Output } from '@angular/core';
 import { SliderModule } from 'primeng/slider';
 import { ControlValueAccessor, FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -8,7 +8,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [SliderModule, FormsModule, ReactiveFormsModule],
   template: `
     <div class="flex flex-col items-center slider-dark">
-      <p-slider [formControl]="formControl" [step]="step" [min]="min" [max]="max" class="w-full"/>
+      <p-slider [formControl]="formControl" [step]="step" [min]="min" [max]="max" (onSlideEnd)="onSlideEnd()" class="w-full"/>
       <div class="mt-2 flex justify-between text-xs text-gray-400 w-full">
         @for (step of steps; track step) {
           <span>{{ step === 0 ? 'OFF' : step }}</span>
@@ -40,6 +40,7 @@ export class Slider implements OnInit, ControlValueAccessor {
   @Input() min: number = 0;
   @Input() max: number = 4;
   @Input() step: number = 1;
+  @Output() commit = new EventEmitter<number>();
   value: number = 0;
 
   formControl: FormControl<number | null> = new FormControl<number>(0);
@@ -80,6 +81,10 @@ export class Slider implements OnInit, ControlValueAccessor {
           this.onChange(this.formControl.value);
         }
       });
+  }
+
+  onSlideEnd() {
+    this.commit.emit(this.formControl.value ?? 0);
   }
 
   get steps() {

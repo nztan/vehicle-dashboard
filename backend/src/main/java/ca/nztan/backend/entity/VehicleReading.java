@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 import java.util.UUID;
 
 @Entity
-@Table(name = "vehicle_reading")
+@Table(name = "vehicle_reading", schema = "vehicle_dashboard")
 @Getter
 @Builder
 @AllArgsConstructor

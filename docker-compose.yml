@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 10
 
-  # databse gui
+  # database gui
   adminer:
     image: adminer
     container_name: vehicle_dashboard_adminer

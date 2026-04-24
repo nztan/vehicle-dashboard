@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, OnInit } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject } from '@angular/core';
 import { Gauge } from '../shared/gauge';
 import { Battery } from '../shared/icon/battery';
 import { BatteryTemperature } from '../shared/icon/battery-temperature';
@@ -7,8 +7,6 @@ import { SliderModule } from 'primeng/slider'
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Slider } from '../shared/slider';
 import { VehicleService } from '../../services/vehicle.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { distinctUntilChanged } from 'rxjs';
 import { Gear } from '../shared/icon/gear';
 import { VehicleSetting } from '../../models/vehicle-setting.model';
 
@@ -31,8 +29,7 @@ import { VehicleSetting } from '../../models/vehicle-setting.model';
     class: 'block h-full min-h-0'
   }
 })
-export class MainPanel implements OnInit {
-  private destroyRef = inject(DestroyRef);
+export class MainPanel {
   private vehicleService = inject(VehicleService);
 
   private reading = this.vehicleService.vehicleReading;
@@ -45,6 +42,7 @@ export class MainPanel implements OnInit {
   isMotorSpeedControlDisabled = computed(() => {
     const setting = this.setting();
     const reading = this.reading();
+    console.log(setting, reading);
     return setting?.charging || reading?.batteryLevel === 0;
   });
 
@@ -68,22 +66,11 @@ export class MainPanel implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.subscribeToFormChanges();
-  }
-
-  private subscribeToFormChanges(): void {
-    this.motorSpeedControl.valueChanges
-      .pipe(
-        distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe((motorSpeed) => {
-        const currentSetting = this.vehicleService.vehicleSetting();
-        this.vehicleService.updateVehicleSetting({
-          motorSpeed: motorSpeed,
-          charging: currentSetting?.charging ?? false
-        } as VehicleSetting);
-      });
+  onMotorSpeedCommit(motorSpeed: number) {
+    const currentSetting = this.vehicleService.vehicleSetting();
+    this.vehicleService.updateVehicleSetting({
+      motorSpeed: motorSpeed,
+      charging: currentSetting?.charging ?? false
+    } as VehicleSetting);
   }
 }
