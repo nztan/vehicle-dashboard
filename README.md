@@ -11,6 +11,7 @@ The complete system can be deployed with Docker Compose, including the Angular f
 
 - Application: `http://18.218.225.123`
 - Read-only database access provided via Adminer: `http://18.218.225.123:8080/`
+- Github repo: https://github.com/nztan/vehicle-dashboard
 - Adminer login:
 ```bash
 System: PostgreSQL
