@@ -1,4 +1,31 @@
 services:
+  # database
+  db:
+    image: postgres:16-alpine
+    container_name: vehicle_dashboard_db
+    environment:
+      POSTGRES_DB: vehicle_dashboard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d vehicle_dashboard" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # databse gui
+  adminer:
+    image: adminer
+    container_name: vehicle_dashboard_adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
   # backend
   backend:
     image: tan254/vehicle_dashboard:backend-latest
@@ -10,6 +37,9 @@ services:
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       SPRING_LIQUIBASE_DEFAULTSCHEMA: vehicle_dashboard
       SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: vehicle_dashboard
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
       interval: 5s
@@ -19,9 +49,6 @@ services:
   # nginx and frontend
   nginx:
     image: tan254/vehicle_dashboard:nginx-latest
-    build:
-      context: .
-      dockerfile: Dockerfile
     container_name: vehicle_dashboard_nginx
     ports:
       - "80:80"
