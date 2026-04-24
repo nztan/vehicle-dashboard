@@ -5,8 +5,8 @@ services:
     container_name: vehicle_dashboard_db
     environment:
       POSTGRES_DB: vehicle_dashboard
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password123
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -32,8 +32,8 @@ services:
     container_name: vehicle_dashboard_service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/vehicle_dashboard
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: password123
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       SPRING_LIQUIBASE_DEFAULTSCHEMA: vehicle_dashboard
       SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: vehicle_dashboard
