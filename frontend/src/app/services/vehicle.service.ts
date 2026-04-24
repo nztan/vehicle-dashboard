@@ -1,4 +1,4 @@
-import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
+import { computed, DestroyRef, inject, Injectable, Injector, signal } from '@angular/core';
 import { distinctUntilChanged, Observable, retry, shareReplay, switchMap, tap, timer } from 'rxjs';
 import { DashboardSnapshot } from '../models/dashboard-snapshot.model';
 import { HttpClient } from '@angular/common/http';
@@ -7,7 +7,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { VehicleReading } from '../models/vehicle-reading.model';
 
 const BASE_URI = '/api/vehicles';
-const POLLING_INTERVAL = 2000;
+const POLLING_INTERVAL = 1500;
 const SESSION_VEHICLE_ID_KEY = 'vehicle_id';
 
 @Injectable({
@@ -16,11 +16,13 @@ const SESSION_VEHICLE_ID_KEY = 'vehicle_id';
 export class VehicleService {
   private httpClient = inject(HttpClient);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
 
   private readonly _vehicleId$ = signal<string | null>(
     sessionStorage.getItem(SESSION_VEHICLE_ID_KEY) ?? null
   )
   private readonly _dashboardSnapshot$ = signal<DashboardSnapshot | null>(null);
+  // stop polling when vehicle is fully stopped and not charging
   private readonly shouldPoll = computed(() => {
     const setting = this.vehicleSetting();
     const reading = this.vehicleReading();
@@ -81,7 +83,7 @@ export class VehicleService {
   }
 
   private startPolling() {
-    toObservable(this.shouldPoll).pipe(
+    toObservable(this.shouldPoll, {injector: this.injector}).pipe(
         distinctUntilChanged(),
         switchMap(isPolling => isPolling
           ? timer(0, POLLING_INTERVAL).pipe(

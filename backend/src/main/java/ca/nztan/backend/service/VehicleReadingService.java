@@ -34,7 +34,7 @@ public class VehicleReadingService {
         return new VehicleReadingDto()
                 .setMotorRPM(0)
                 .setPowerKw(0)
-                .setBatteryLevel(0)
+                .setBatteryLevel(100)
                 .setBatteryTemperature(0)
                 .setGearRatio(GEAR_RATIO_PARK)
                 .setParkingBrake(false)

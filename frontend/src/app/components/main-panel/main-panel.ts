@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { Gauge } from '../shared/gauge';
 import { Battery } from '../shared/icon/battery';
 import { BatteryTemperature } from '../shared/icon/battery-temperature';
@@ -32,8 +32,9 @@ import { VehicleSetting } from '../../models/vehicle-setting.model';
 export class MainPanel {
   private vehicleService = inject(VehicleService);
 
-  private reading = this.vehicleService.vehicleReading;
-  private setting = this.vehicleService.vehicleSetting;
+  setting = this.vehicleService.vehicleSetting;
+  reading = this.vehicleService.vehicleReading;
+
   motorRpm = computed(() => this.reading()?.motorRPM ?? 0);
   powerKw = computed(() => this.reading()?.powerKw ?? 0);
   gearRatio = computed(() => this.reading()?.gearRatio ?? 'N/N');
@@ -42,7 +43,6 @@ export class MainPanel {
   isMotorSpeedControlDisabled = computed(() => {
     const setting = this.setting();
     const reading = this.reading();
-    console.log(setting, reading);
     return setting?.charging || reading?.batteryLevel === 0;
   });
 
@@ -51,7 +51,10 @@ export class MainPanel {
   constructor() {
     effect(() => {
       if (this.isMotorSpeedControlDisabled()) {
-        this.motorSpeedControl.setValue(0);
+        if (this.setting()?.motorSpeed !== 0) {
+          this.motorSpeedControl.setValue(0);
+          this.onMotorSpeedCommit(0);
+        }
         this.motorSpeedControl.disable({emitEvent: false});
       } else {
         this.motorSpeedControl.enable({emitEvent: false});
